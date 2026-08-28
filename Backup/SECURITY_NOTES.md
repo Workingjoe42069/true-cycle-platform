@@ -14,14 +14,15 @@ the actual code and either close the gap or call it out explicitly below.
 | A04 | Insecure Design | **Addressed** | Invite codes are single-use, expire in 7 days, and are generated with `crypto.randomBytes` (unguessable), closing the gap flagged in the earlier Team GPS review. Generic "Invalid email or password" errors on login prevent user enumeration. |
 | A05 | Security Misconfiguration | **Addressed** | `helmet()` sets standard security headers. CORS is locked to an explicit allowlist (`FRONTEND_ORIGIN`) with credentials, not a wildcard. The global error handler never returns stack traces or internals to the client — only a generic message, with real detail going to server logs only. |
 | A06 | Vulnerable & Outdated Components | **Your ongoing responsibility** | Dependencies are pinned to recent stable majors in `package.json`. Run `npm audit` periodically and keep `npm outdated` in your deploy checklist — this isn't something a one-time review can guarantee going forward. |
-| A07 | Identification & Authentication Failures | **Addressed** | Auth endpoints are rate-limited (20 attempts / 15 min / IP) to slow brute force. Passwords must be 10+ characters. Sessions expire after 12 hours. Password reset uses single-use, 1-hour-expiring tokens sent only to the email on file, with the same generic response whether or not that email has an account (no enumeration). |
+| A07 | Identification & Authentication Failures | **Addressed** | Auth endpoints are rate-limited (20 attempts / 15 min / IP) to slow brute force. Passwords must be 10+ characters. Sessions expire after 12 hours. **Gap you should plan for:** there's no password-reset flow yet — if a user forgets their password, you'll need to reset it directly in the database for now. |
 | A08 | Software & Data Integrity Failures | **Addressed** | No unpinned remote script includes beyond Google Fonts (static, reputable). No deserialization of untrusted data. `npm install` uses `package.json`, not arbitrary remote code execution paths. |
 | A09 | Security Logging & Monitoring Failures | **Partial** | Errors are logged server-side. **Gap you should plan for:** there's no structured audit log of who logged in, from where, or failed-login patterns beyond what rate limiting catches. Worth adding before you're relying on this for anything sensitive at scale. |
 | A10 | Server-Side Request Forgery (SSRF) | **Not applicable / addressed** | The backend never makes outbound requests based on user-supplied URLs or input. |
 
-## What's still explicitly open
+## What's still explicitly open (carried over from the earlier Team GPS review, still true here)
 
 1. **HTTPS termination** — non-optional before real users log in. Render provides this automatically for you; if you move to your own server later, you need a reverse proxy (e.g., Caddy or nginx) with a real certificate.
-2. **Structured auth event logging** — nice-to-have for an audit trail; not built.
+2. **Password reset flow** — not built. Worth adding once you have live users.
+3. **Structured auth event logging** — nice-to-have for an audit trail; not built.
 
-Neither of these blocks a safe *test* deployment behind HTTPS on Render.
+None of these three block a safe *test* deployment behind HTTPS on Render. They matter more as you move toward real client data at scale.
