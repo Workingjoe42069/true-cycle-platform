@@ -407,9 +407,9 @@
 </div><!-- /app-root -->
 
 <script>
-  // Point this at your deployed backend. During local dev this is usually
-  // http://localhost:4000; in production it's your Render (or other) API URL.
-  window.API_BASE = window.API_BASE || 'http://localhost:4000';
+  // Backend API URL. Set permanently to the live truecycle-platform backend
+  // so this doesn't need re-editing every time this file is updated.
+  window.API_BASE = window.API_BASE || 'https://truecycle-platform.onrender.com';
 
   async function api(path, options = {}) {
     const res = await fetch(window.API_BASE + '/api' + path, {
