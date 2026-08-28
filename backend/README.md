@@ -12,6 +12,19 @@ npm run migrate
 npm run dev              # http://localhost:4000
 ```
 
+## Demo data
+
+To always have something ready to show, seed a linked demo coach + client
+with a sample commitment, two check-ins, and a coach note:
+
+```bash
+npm run seed
+```
+
+Safe to run more than once -- it skips anything that already exists rather
+than duplicating it. Prints the demo login credentials when it finishes.
+Change or delete these accounts before real client data goes on this app.
+
 Generate a secret:
 ```bash
 node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"
