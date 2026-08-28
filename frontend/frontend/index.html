@@ -37,12 +37,12 @@
     color: #fff;
     padding: 28px 32px 0;
   }
-  .header-inner { max-width: 1040px; margin: 0 auto; display: flex; align-items: center; gap: 18px; padding-bottom: 20px; }
-  .logo-mark { flex-shrink: 0; }
+  .header-inner { max-width: 1040px; margin: 0 auto; display: flex; align-items: flex-start; flex-wrap: wrap; gap: 18px; padding-bottom: 20px; }
+  .logo-mark { flex-shrink: 0; margin-top: 4px; }
   .header-text { flex: 1; }
   .header-text h1 { margin: 0 0 4px; font-size: 26px; color: #fff; }
   .header-text p { margin: 0; font-size: 14px; color: #E4F1F0; font-style: italic; }
-  .identity-chip { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #E4F1F0; }
+  .identity-chip { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #E4F1F0; flex-wrap: wrap; }
   .identity-chip .role-pill {
     background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
     padding: 4px 12px; border-radius: 20px; font-family: 'Oswald', sans-serif; letter-spacing: 0.03em;
@@ -54,7 +54,9 @@
   .roster-bar select { background: #fff; border: none; border-radius: 6px; padding: 8px 12px; font-family: inherit; font-size: 14px; min-width: 220px; }
   .roster-bar .btn-small { background: var(--gold); color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 12px; letter-spacing: 0.03em; text-transform: uppercase; cursor: pointer; }
   .roster-bar .btn-small:hover { background: #d76a34; }
-  nav.tabs { max-width: 1040px; margin: 0 auto; display: flex; gap: 6px; padding: 0 32px; }
+  nav.tabs { max-width: 1040px; margin: 0 auto; display: flex; gap: 6px; padding: 0 32px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  nav.tabs::-webkit-scrollbar { display: none; }
+  nav.tabs button { flex-shrink: 0; white-space: nowrap; }
   nav.tabs button { background: none; border: none; color: #fff; opacity: 0.75; font-family: 'Oswald', sans-serif; font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase; padding: 10px 16px; cursor: pointer; border-bottom: 3px solid transparent; }
   nav.tabs button.active { opacity: 1; border-bottom: 3px solid var(--gold); }
   main { max-width: 1040px; margin: 0 auto; padding: 28px 32px 60px; }
@@ -93,6 +95,9 @@
   .progress-bar-fill { background: linear-gradient(90deg, var(--teal), var(--gold)); height: 100%; transition: width 0.4s ease; }
   .stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 18px 0; }
   .stat-box { flex: 1; min-width: 140px; background: #F0F6F5; border-radius: 8px; padding: 14px 16px; text-align: center; }
+  @media (max-width: 480px) {
+    .stat-box { min-width: 100%; }
+  }
   .stat-box .num { font-family: 'Oswald', sans-serif; font-size: 28px; color: var(--teal-dark); }
   .stat-box .lbl { font-size: 12px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.03em; }
   .checkin-item, .note-item { border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; margin-bottom: 14px; background: #FCFBF8; }
@@ -113,7 +118,8 @@
   .badge-private { display: inline-block; background: var(--red); color: #fff; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-left: 8px; font-family: 'Oswald', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
   .gate-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(120deg, var(--teal-dark), var(--teal)); padding: 24px; }
   .gate-card { background: #fff; border-radius: 14px; padding: 40px 36px; max-width: 460px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
-  .gate-logo { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .gate-logo { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 6px; }
+  .gate-logo svg { flex-shrink: 0; margin-top: 2px; }
   .gate-card h1 { font-size: 22px; color: var(--teal-dark); margin: 0; }
   .gate-tagline { font-style: italic; color: var(--text-soft); font-size: 14px; margin: 4px 0 26px; }
   .role-choice { display: flex; gap: 12px; margin-bottom: 20px; }
@@ -171,6 +177,8 @@
   @media (max-width: 640px) {
     .gsn-chain { flex-direction: column; }
     .gsn-arrow { justify-content: center; transform: rotate(90deg); }
+    .gsn-footer { flex-direction: column; align-items: stretch; gap: 12px; }
+    .gsn-footer button { width: 100%; text-align: center; }
   }
 
   /* ---- Required / optional field indicators ---- */
