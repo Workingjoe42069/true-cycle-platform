@@ -6,7 +6,8 @@ const { hashPassword, verifyPassword } = require('../utils/hash');
 const { sendPasswordResetEmail } = require('../utils/mailer');
 const { signSession, setSessionCookie, clearSessionCookie } = require('../utils/jwt');
 const { isValidEmail, isValidPassword, isNonEmptyString } = require('../utils/validate');
-const { requireAuth, requireCoach } = require('../middleware/auth');
+const { requireAuth } = require('../middleware/auth');
+const { hashInviteToken } = require('../utils/invites');
 
 const router = express.Router();
 
@@ -49,55 +50,50 @@ router.post('/signup/coach', authLimiter, async (req, res) => {
   }
 });
 
-// ---- Coach: generate a single-use, time-limited invite code for a new client ----
-router.post('/invite', requireAuth, requireCoach, async (req, res) => {
-  const code = crypto.randomBytes(9).toString('base64url'); // ~12 chars, unguessable
-  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-  await pool.query(
-    'INSERT INTO ct_invite_codes (code, coach_user_id, expires_at) VALUES ($1, $2, $3)',
-    [code, req.user.id, expiresAt]
-  );
-  res.status(201).json({ code, expiresAt });
-});
-
-// ---- Client signup, redeeming a coach's invite code ----
+// ---- Client signup, accepting a coach's emailed invitation ----
+// The email address and coach come from the invitation itself (the email
+// is locked -- it can't be changed at signup). Only the name, which the
+// client may correct, and the password come from the request.
 router.post('/signup/client', authLimiter, async (req, res) => {
-  const { email, password, name, inviteCode } = req.body;
-  if (!isValidEmail(email)) return res.status(400).json({ error: 'Please enter a valid email address.' });
+  const { inviteToken, firstName, lastName, password } = req.body || {};
+  const invalidInvite = { error: 'This invitation link has expired or has already been used. Ask your coach to send a new one.' };
+  if (!isNonEmptyString(inviteToken, 200)) return res.status(400).json(invalidInvite);
+  if (!isNonEmptyString(firstName, 100)) return res.status(400).json({ error: 'Please enter your first name.' });
+  if (!isNonEmptyString(lastName, 100)) return res.status(400).json({ error: 'Please enter your last name.' });
   if (!isValidPassword(password)) return res.status(400).json({ error: 'Password must be at least 10 characters.' });
-  if (!isNonEmptyString(name, 200)) return res.status(400).json({ error: 'Please enter your name.' });
-  if (!isNonEmptyString(inviteCode, 64)) return res.status(400).json({ error: 'An invite code from your coach is required.' });
 
   const client = await pool.connect();
   try {
     await client.query('BEGIN');
 
     const inviteResult = await client.query(
-      `SELECT coach_user_id, expires_at, used_at FROM ct_invite_codes
-       WHERE code = $1 FOR UPDATE`,
-      [inviteCode]
+      `SELECT id, coach_user_id, email, expires_at FROM ct_client_invitations
+       WHERE token_hash = $1 AND accepted_at IS NULL AND cancelled_at IS NULL
+       FOR UPDATE`,
+      [hashInviteToken(inviteToken)]
     );
     if (inviteResult.rowCount === 0) {
       await client.query('ROLLBACK');
-      return res.status(400).json({ error: 'That invite code is not valid.' });
+      return res.status(400).json(invalidInvite);
     }
     const invite = inviteResult.rows[0];
-    if (invite.used_at || new Date(invite.expires_at) < new Date()) {
+    if (new Date(invite.expires_at) < new Date()) {
       await client.query('ROLLBACK');
-      return res.status(400).json({ error: 'That invite code has expired or already been used. Ask your coach for a new one.' });
+      return res.status(400).json(invalidInvite);
     }
 
-    const existing = await client.query('SELECT 1 FROM users WHERE email = $1', [email]);
+    const existing = await client.query('SELECT 1 FROM users WHERE email = $1', [invite.email]);
     if (existing.rowCount > 0) {
       await client.query('ROLLBACK');
-      return res.status(409).json({ error: 'That email could not be registered. Try logging in instead.' });
+      return res.status(409).json({ error: 'An account already exists for this email. Please log in instead.' });
     }
 
     const passwordHash = await hashPassword(password);
+    const fullName = `${firstName.trim()} ${lastName.trim()}`;
     const userResult = await client.query(
       `INSERT INTO users (email, name, password_hash, commitment_role)
        VALUES ($1, $2, $3, 'client') RETURNING id, email, name, commitment_role`,
-      [email.toLowerCase(), name.trim(), passwordHash]
+      [String(invite.email).toLowerCase(), fullName, passwordHash]
     );
     const user = userResult.rows[0];
 
@@ -105,7 +101,10 @@ router.post('/signup/client', authLimiter, async (req, res) => {
       'INSERT INTO ct_relationships (coach_user_id, client_user_id) VALUES ($1, $2)',
       [invite.coach_user_id, user.id]
     );
-    await client.query('UPDATE ct_invite_codes SET used_at = now() WHERE code = $1', [inviteCode]);
+    await client.query(
+      'UPDATE ct_client_invitations SET accepted_at = now(), accepted_user_id = $1 WHERE id = $2',
+      [user.id, invite.id]
+    );
 
     await client.query('COMMIT');
 

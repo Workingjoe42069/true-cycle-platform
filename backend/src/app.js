@@ -10,6 +10,7 @@ const rosterRoutes = require('./routes/roster');
 const commitmentsRoutes = require('./routes/commitments');
 const checkinsRoutes = require('./routes/checkins');
 const notesRoutes = require('./routes/notes');
+const invitationsRoutes = require('./routes/invitations');
 
 const app = express();
 
@@ -46,6 +47,7 @@ app.use('/api/roster', rosterRoutes);
 app.use('/api/commitments', commitmentsRoutes);
 app.use('/api/checkins', checkinsRoutes);
 app.use('/api/notes', notesRoutes);
+app.use('/api/invitations', invitationsRoutes);
 
 // CORS rejection
 app.use((err, req, res, next) => {

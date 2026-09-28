@@ -25,3 +25,14 @@ the actual code and either close the gap or call it out explicitly below.
 2. **Structured auth event logging** — nice-to-have for an audit trail; not built.
 
 Neither of these blocks a safe *test* deployment behind HTTPS on Render.
+
+## Client invitations (emailed links) — added Sept 2026
+
+- Coaches invite clients by first name, last name and email; the client receives a personal link (`/?invite=<token>`).
+- Tokens are 32 random bytes; only a SHA-256 hash is stored (`ct_client_invitations.token_hash`), so a database leak does not yield working links.
+- Links are single-use, expire after 7 days, and are rotated on every resend (the previous link stops working). Coaches can cancel.
+- The client's email is taken from the invitation server-side and cannot be changed at signup; any email sent in the request body is ignored.
+- The token is removed from the address bar on page load, the page sets `Referrer-Policy: no-referrer`, and the lookup uses POST so tokens stay out of access logs.
+- All user-supplied values are HTML-escaped in outgoing email; header values are stripped of line breaks.
+- Coach-only endpoints are scoped by `coach_user_id` (a coach cannot see, resend or cancel another coach's invitations). Outgoing invite email is rate-limited per coach (30/hour), resends have a 60-second cooldown and a 10-send cap per invitation.
+- The old copy/paste invite-code endpoint (`POST /api/auth/invite`) has been removed.

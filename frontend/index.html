@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="referrer" content="no-referrer">
 <title>True Cycle Coaching | Commitment Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -37,12 +38,12 @@
     color: #fff;
     padding: 28px 32px 0;
   }
-  .header-inner { max-width: 1040px; margin: 0 auto; display: flex; align-items: center; gap: 18px; padding-bottom: 20px; }
-  .logo-mark { flex-shrink: 0; }
+  .header-inner { max-width: 1040px; margin: 0 auto; display: flex; align-items: flex-start; flex-wrap: wrap; gap: 18px; padding-bottom: 20px; }
+  .logo-mark { flex-shrink: 0; margin-top: 4px; }
   .header-text { flex: 1; }
   .header-text h1 { margin: 0 0 4px; font-size: 26px; color: #fff; }
   .header-text p { margin: 0; font-size: 14px; color: #E4F1F0; font-style: italic; }
-  .identity-chip { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #E4F1F0; }
+  .identity-chip { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #E4F1F0; flex-wrap: wrap; }
   .identity-chip .role-pill {
     background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
     padding: 4px 12px; border-radius: 20px; font-family: 'Oswald', sans-serif; letter-spacing: 0.03em;
@@ -54,7 +55,9 @@
   .roster-bar select { background: #fff; border: none; border-radius: 6px; padding: 8px 12px; font-family: inherit; font-size: 14px; min-width: 220px; }
   .roster-bar .btn-small { background: var(--gold); color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-family: 'Oswald', sans-serif; font-size: 12px; letter-spacing: 0.03em; text-transform: uppercase; cursor: pointer; }
   .roster-bar .btn-small:hover { background: #d76a34; }
-  nav.tabs { max-width: 1040px; margin: 0 auto; display: flex; gap: 6px; padding: 0 32px; }
+  nav.tabs { max-width: 1040px; margin: 0 auto; display: flex; gap: 6px; padding: 0 32px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  nav.tabs::-webkit-scrollbar { display: none; }
+  nav.tabs button { flex-shrink: 0; white-space: nowrap; }
   nav.tabs button { background: none; border: none; color: #fff; opacity: 0.75; font-family: 'Oswald', sans-serif; font-size: 14px; letter-spacing: 0.04em; text-transform: uppercase; padding: 10px 16px; cursor: pointer; border-bottom: 3px solid transparent; }
   nav.tabs button.active { opacity: 1; border-bottom: 3px solid var(--gold); }
   main { max-width: 1040px; margin: 0 auto; padding: 28px 32px 60px; }
@@ -93,6 +96,9 @@
   .progress-bar-fill { background: linear-gradient(90deg, var(--teal), var(--gold)); height: 100%; transition: width 0.4s ease; }
   .stat-row { display: flex; gap: 16px; flex-wrap: wrap; margin: 18px 0; }
   .stat-box { flex: 1; min-width: 140px; background: #F0F6F5; border-radius: 8px; padding: 14px 16px; text-align: center; }
+  @media (max-width: 480px) {
+    .stat-box { min-width: 100%; }
+  }
   .stat-box .num { font-family: 'Oswald', sans-serif; font-size: 28px; color: var(--teal-dark); }
   .stat-box .lbl { font-size: 12px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.03em; }
   .checkin-item, .note-item { border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; margin-bottom: 14px; background: #FCFBF8; }
@@ -113,7 +119,8 @@
   .badge-private { display: inline-block; background: var(--red); color: #fff; font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-left: 8px; font-family: 'Oswald', sans-serif; letter-spacing: 0.04em; text-transform: uppercase; }
   .gate-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(120deg, var(--teal-dark), var(--teal)); padding: 24px; }
   .gate-card { background: #fff; border-radius: 14px; padding: 40px 36px; max-width: 460px; width: 100%; box-shadow: 0 20px 50px rgba(0,0,0,0.25); }
-  .gate-logo { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .gate-logo { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 6px; }
+  .gate-logo svg { flex-shrink: 0; margin-top: 2px; }
   .gate-card h1 { font-size: 22px; color: var(--teal-dark); margin: 0; }
   .gate-tagline { font-style: italic; color: var(--text-soft); font-size: 14px; margin: 4px 0 26px; }
   .role-choice { display: flex; gap: 12px; margin-bottom: 20px; }
@@ -171,6 +178,71 @@
   @media (max-width: 640px) {
     .gsn-chain { flex-direction: column; }
     .gsn-arrow { justify-content: center; transform: rotate(90deg); }
+    .gsn-footer { flex-direction: column; align-items: stretch; gap: 12px; }
+    .gsn-footer button { width: 100%; text-align: center; }
+  }
+
+  /* ---- Required / optional field indicators ---- */
+  .req-badge, .opt-badge {
+    display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 8px;
+    margin-left: 8px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase;
+    vertical-align: middle; font-family: 'Inter', sans-serif;
+  }
+  .req-badge { background: var(--red); color: #fff; }
+  .opt-badge { background: var(--border); color: var(--text-soft); }
+  .field-invalid { border-color: var(--red) !important; box-shadow: 0 0 0 3px rgba(212,61,53,0.15) !important; background: #FDF6F5 !important; }
+  .field-error-msg {
+    display: block; color: var(--red); font-size: 12.5px; font-weight: 600; margin-top: 5px;
+  }
+  .field-error-msg::before { content: '\26A0  '; }
+
+  /* ---- Invite client + pending invitations modals ---- */
+  .tc-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(2,82,86,0.55);
+    z-index: 600; align-items: center; justify-content: center; padding: 20px;
+  }
+  .tc-overlay.active { display: flex; }
+  .tc-modal {
+    background: #fff; border-radius: 14px; max-width: 520px; width: 100%;
+    max-height: 90vh; overflow-y: auto; box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+  }
+  .tc-modal-header { background: linear-gradient(120deg, var(--teal-dark), var(--teal)); color: #fff; padding: 22px 26px; border-radius: 14px 14px 0 0; position: relative; }
+  .tc-modal-header h2 { margin: 0 0 4px; font-size: 20px; color: #fff; }
+  .tc-modal-header p { margin: 0; font-size: 13.5px; color: #E4F1F0; font-style: italic; }
+  .tc-modal-close { position: absolute; top: 12px; right: 14px; background: none; border: none; color: #fff; font-size: 24px; line-height: 1; cursor: pointer; opacity: 0.8; padding: 4px 8px; }
+  .tc-modal-close:hover { opacity: 1; }
+  .tc-modal-body { padding: 8px 26px 26px; }
+  .tc-name-row { display: flex; gap: 12px; }
+  .tc-name-row > div { flex: 1; min-width: 0; }
+  .tc-modal-actions { display: flex; gap: 10px; justify-content: flex-end; align-items: center; margin-top: 22px; flex-wrap: wrap; }
+  .tc-modal-actions .btn { margin-top: 0; }
+  .tc-success { text-align: center; padding: 18px 4px 4px; }
+  .tc-success .tc-check { width: 56px; height: 56px; border-radius: 50%; background: #F0F6F5; color: var(--teal); display: inline-flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 10px; }
+  .tc-success h3 { font-family: 'Oswald', sans-serif; color: var(--teal-dark); margin: 0 0 6px; font-size: 20px; }
+  .tc-success p { color: var(--text-soft); font-size: 14px; margin: 4px 0; }
+  .tc-warn { background: #FDF3EC; border: 1px solid var(--gold); color: #8A4420; padding: 10px 14px; border-radius: 6px; font-size: 13px; margin-top: 14px; text-align: left; }
+  .invite-item { border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-top: 12px; background: #FCFBF8; }
+  .invite-item .invite-name { font-weight: 700; color: var(--teal-dark); }
+  .invite-item .invite-email { font-size: 13px; color: var(--text-soft); word-break: break-all; }
+  .invite-item .invite-meta { font-size: 12px; color: var(--text-soft); margin-top: 6px; }
+  .invite-item .invite-meta .expired { color: var(--red); font-weight: 700; }
+  .invite-item .invite-actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .invite-item .invite-actions button {
+    background: #fff; border: 1px solid var(--teal); color: var(--teal-dark); border-radius: 6px; padding: 6px 12px;
+    font-family: 'Oswald', sans-serif; font-size: 12px; letter-spacing: 0.03em; text-transform: uppercase; cursor: pointer;
+  }
+  .invite-item .invite-actions button.danger { border-color: var(--red); color: var(--red); }
+  .invite-item .invite-actions button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .invite-item .invite-status { font-size: 12.5px; margin-top: 8px; color: var(--teal-dark); }
+  .roster-bar .btn-small.outline { background: transparent; border: 1px solid rgba(255,255,255,0.6); color: #fff; }
+  .roster-bar .btn-small.outline:hover { background: rgba(255,255,255,0.12); }
+  .pending-count { display: inline-block; background: var(--gold); color: #fff; border-radius: 10px; padding: 0 7px; margin-left: 6px; font-size: 11px; }
+  input[readonly].locked { background: #EFEDE6; color: var(--text-soft); cursor: not-allowed; }
+  .gate-welcome { background: #F0F6F5; border-left: 4px solid var(--gold); border-radius: 6px; padding: 12px 16px; font-size: 14px; color: var(--teal-dark); margin-bottom: 6px; }
+  @media (max-width: 480px) {
+    .tc-name-row { flex-direction: column; gap: 0; }
+    .tc-modal-actions { flex-direction: column-reverse; align-items: stretch; }
+    .tc-modal-actions .btn { width: 100%; text-align: center; }
   }
 </style>
 </head>
@@ -202,21 +274,20 @@
     <div class="gate-step" id="gateStepAuth">
       <form id="authForm" onsubmit="return false;">
         <div id="nameFieldWrap">
-          <label style="margin-top:0;">Your Name</label>
+          <label style="margin-top:0;">Your Name <span class="req-badge">Required</span></label>
           <input type="text" id="authName" placeholder="e.g. Evan Ray" autocomplete="name">
         </div>
-        <label>Email</label>
+        <label>Email <span class="req-badge">Required</span></label>
         <input type="email" id="authEmail" placeholder="you@example.com" autocomplete="email">
-        <label>Password</label>
+        <label>Password <span class="req-badge">Required</span></label>
         <input type="password" id="authPassword" placeholder="At least 10 characters" autocomplete="current-password">
-        <div id="inviteFieldWrap" style="display:none;">
-          <label>Invite Code <span class="hint">From your coach</span></label>
-          <input type="text" id="authInviteCode" placeholder="e.g. AbCdEf12Gh34">
-        </div>
         <button class="btn" style="width:100%;text-align:center;" id="authSubmitBtn" onclick="submitAuth()">Log In</button>
       </form>
       <div class="gate-toggle" id="authToggleWrap">
         <span id="authToggleLabel">New here?</span> <button onclick="toggleAuthMode()" id="authToggleBtn">Create an account</button>
+      </div>
+      <div class="gate-toggle" id="clientNewHereNote" style="display:none;">
+        New here? Look for the invitation email from your coach &mdash; it has a link to create your account.
       </div>
       <div class="gate-toggle" id="forgotPasswordWrap">
         <button onclick="showGateStep('gateStepForgot')">Forgot your password?</button>
@@ -229,6 +300,7 @@
     <div class="gate-step" id="gateStepForgot">
       <label style="margin-top:0;">Reset your password</label>
       <p class="gate-tagline" style="margin:0 0 16px;">Enter the email on your account and we'll send a reset link.</p>
+      <label style="margin-top:0;">Email <span class="req-badge">Required</span></label>
       <input type="email" id="forgotEmail" placeholder="you@example.com" autocomplete="email">
       <button class="btn" style="width:100%;text-align:center;" onclick="submitForgotPassword()">Send Reset Link</button>
       <div class="gate-error" id="forgotError"></div>
@@ -236,9 +308,40 @@
       <button class="gate-back" onclick="showGateStep('gateStepAuth')">&larr; Back</button>
     </div>
 
+    <!-- Invitation: accept (reached only via emailed invite link) -->
+    <div class="gate-step" id="gateStepInvite">
+      <div class="gate-welcome" id="inviteWelcome"></div>
+      <div class="tc-name-row">
+        <div>
+          <label>First Name <span class="req-badge">Required</span></label>
+          <input type="text" id="inviteFirstName" autocomplete="given-name" maxlength="100">
+        </div>
+        <div>
+          <label>Last Name <span class="req-badge">Required</span></label>
+          <input type="text" id="inviteLastName" autocomplete="family-name" maxlength="100">
+        </div>
+      </div>
+      <label>Email <span class="hint">This is the address your coach invited. You'll use it to log in.</span></label>
+      <input type="email" id="inviteEmail" class="locked" readonly tabindex="-1" autocomplete="username">
+      <label>Create a Password <span class="req-badge">Required</span></label>
+      <input type="password" id="invitePassword" placeholder="At least 10 characters" autocomplete="new-password" maxlength="128">
+      <label>Confirm Password <span class="req-badge">Required</span></label>
+      <input type="password" id="invitePasswordConfirm" placeholder="Type it again" autocomplete="new-password" maxlength="128">
+      <button class="btn" style="width:100%;text-align:center;" id="inviteSubmitBtn" onclick="submitAcceptInvite()">Create My Account</button>
+      <div class="gate-error" id="inviteError"></div>
+    </div>
+
+    <!-- Invitation: link invalid / expired / used -->
+    <div class="gate-step" id="gateStepInviteInvalid">
+      <label style="margin-top:0;">This invitation link isn't active</label>
+      <p class="gate-tagline" style="margin:0 0 16px;" id="inviteInvalidMsg">It may have expired, been replaced by a newer invitation, or already been used. Ask your coach to send a new one.</p>
+      <p class="gate-tagline" style="margin:0 0 6px;">Already created your account?</p>
+      <button class="btn" style="width:100%;text-align:center;margin-top:0;" onclick="goToClientLogin()">Log In</button>
+    </div>
+
     <!-- Step 4: set a new password (reached only via emailed link) -->
     <div class="gate-step" id="gateStepReset">
-      <label style="margin-top:0;">Set a new password</label>
+      <label style="margin-top:0;">Set a new password <span class="req-badge">Required</span></label>
       <input type="password" id="resetNewPassword" placeholder="At least 10 characters" autocomplete="new-password">
       <button class="btn" style="width:100%;text-align:center;" onclick="submitResetPassword()">Update Password</button>
       <div class="gate-error" id="resetError"></div>
@@ -278,6 +381,68 @@
   </div>
 </div>
 
+<!-- ===================== INVITE CLIENT MODAL (coach) ===================== -->
+<div class="tc-overlay" id="inviteOverlay" role="dialog" aria-modal="true" aria-labelledby="inviteModalTitle">
+  <div class="tc-modal">
+    <div class="tc-modal-header">
+      <button class="tc-modal-close" onclick="closeInviteModal()" aria-label="Close">&times;</button>
+      <h2 id="inviteModalTitle">Invite a Client</h2>
+      <p>They'll get a personal email with a link to create their account and join you.</p>
+    </div>
+    <div class="tc-modal-body">
+      <div id="inviteFormWrap">
+        <div class="tc-name-row">
+          <div>
+            <label>First Name <span class="req-badge">Required</span></label>
+            <input type="text" id="invFirstName" autocomplete="off" maxlength="100" placeholder="e.g. Evan">
+          </div>
+          <div>
+            <label>Last Name <span class="req-badge">Required</span></label>
+            <input type="text" id="invLastName" autocomplete="off" maxlength="100" placeholder="e.g. Ray">
+          </div>
+        </div>
+        <label>Email Address <span class="req-badge">Required</span></label>
+        <input type="email" id="invEmail" autocomplete="off" maxlength="254" placeholder="client@example.com">
+        <div class="gate-error" id="invError"></div>
+        <div class="tc-modal-actions">
+          <button class="btn ghost" onclick="closeInviteModal()">Cancel</button>
+          <button class="btn" id="invSubmitBtn" onclick="submitInvite()">Send Invitation</button>
+        </div>
+      </div>
+      <div id="inviteSuccessWrap" style="display:none;">
+        <div class="tc-success">
+          <div class="tc-check">&#10003;</div>
+          <h3 id="invSuccessTitle">Invitation sent</h3>
+          <p id="invSuccessMsg"></p>
+          <div class="tc-warn" id="invSuccessWarn" style="display:none;"></div>
+        </div>
+        <div class="tc-modal-actions" style="justify-content:center;">
+          <button class="btn ghost" onclick="resetInviteForm()">Invite Another</button>
+          <button class="btn" onclick="closeInviteModal()">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== PENDING INVITATIONS MODAL (coach) ===================== -->
+<div class="tc-overlay" id="pendingOverlay" role="dialog" aria-modal="true" aria-labelledby="pendingModalTitle">
+  <div class="tc-modal">
+    <div class="tc-modal-header">
+      <button class="tc-modal-close" onclick="closePendingModal()" aria-label="Close">&times;</button>
+      <h2 id="pendingModalTitle">Pending Invitations</h2>
+      <p>Clients who haven't created their account yet. Resending sends a fresh link &mdash; the old one stops working.</p>
+    </div>
+    <div class="tc-modal-body">
+      <div id="pendingList"></div>
+      <div class="tc-modal-actions">
+        <button class="btn ghost" onclick="closePendingModal(); openInviteModal();">+ Invite a Client</button>
+        <button class="btn" onclick="closePendingModal()">Done</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ===================== APP ===================== -->
 <div id="app-root">
 
@@ -306,7 +471,8 @@
     <label>Viewing Client</label>
     <select id="rosterSelect" onchange="onRosterChange()"></select>
     <span style="color:#E4F1F0; font-size:12px;" id="rosterCount"></span>
-    <button class="btn-small" onclick="inviteNewClient()">+ Invite Client</button>
+    <button class="btn-small" onclick="openInviteModal()">+ Invite Client</button>
+    <button class="btn-small outline" id="pendingInvitesBtn" onclick="openPendingModal()" style="display:none;">Pending<span class="pending-count" id="pendingInvitesCount">0</span></button>
   </div>
 
   <nav class="tabs">
@@ -322,7 +488,8 @@
 
   <div id="noClientSelected" class="empty-state" style="display:none;">
     <h2 style="color:var(--teal-dark);">No client selected yet</h2>
-    <p>Invite a client from the roster bar above to get started.</p>
+    <p>Invite your first client to get started. They'll get an email with a link to create their account.</p>
+    <button class="btn" onclick="openInviteModal()">+ Invite a Client</button>
   </div>
 
   <div id="mainContentWrap">
@@ -341,23 +508,23 @@
           Start with why. Before the plan, get clear on why this goal matters &mdash; to you, your team, or the people counting on you. Clarity of purpose is what carries a commitment past the point where willpower alone runs out.
         </div>
 
-        <label>Why This Goal Matters <span class="hint">One or two sentences. This is your anchor when things get hard.</span></label>
+        <label>Why This Goal Matters <span class="opt-badge">Optional</span> <span class="hint">One or two sentences. This is your anchor when things get hard.</span></label>
         <textarea id="whyInput" placeholder="e.g. Our team loses momentum every quarter because we don't align early. Fixing this changes how we lead all year."></textarea>
 
-        <label>1 &mdash; The Goal <span class="hint">The single outcome you're committing to.</span></label>
+        <label>1 &mdash; The Goal <span class="req-badge">Required</span> <span class="hint">The single outcome you're committing to.</span></label>
         <input type="text" id="goalInput" placeholder="e.g. Run a fully aligned Q3 planning cycle with my leadership team">
 
-        <label>3 &mdash; Key Strategies <span class="hint">The core approaches that will get you there.</span></label>
-        <div class="row-group"><input type="text" id="strategy0" placeholder="Strategy 1"></div>
-        <div class="row-group"><input type="text" id="strategy1" placeholder="Strategy 2"></div>
-        <div class="row-group"><input type="text" id="strategy2" placeholder="Strategy 3"></div>
+        <label>3 &mdash; Key Strategies <span class="hint">The core approaches that will get you there. The first is required &mdash; the other two are optional but recommended.</span></label>
+        <div class="row-group"><input type="text" id="strategy0" placeholder="Strategy 1 (required)"></div>
+        <div class="row-group"><input type="text" id="strategy1" placeholder="Strategy 2 (optional)"></div>
+        <div class="row-group"><input type="text" id="strategy2" placeholder="Strategy 3 (optional)"></div>
 
-        <label>5 &mdash; Action Steps <span class="hint">Specific actions you can start this week.</span></label>
-        <div class="row-group"><input type="text" id="step0" placeholder="Step 1"></div>
-        <div class="row-group"><input type="text" id="step1" placeholder="Step 2"></div>
-        <div class="row-group"><input type="text" id="step2" placeholder="Step 3"></div>
-        <div class="row-group"><input type="text" id="step3" placeholder="Step 4"></div>
-        <div class="row-group"><input type="text" id="step4" placeholder="Step 5"></div>
+        <label>5 &mdash; Action Steps <span class="hint">Specific actions you can start this week. The first is required &mdash; the rest are optional but recommended.</span></label>
+        <div class="row-group"><input type="text" id="step0" placeholder="Step 1 (required)"></div>
+        <div class="row-group"><input type="text" id="step1" placeholder="Step 2 (optional)"></div>
+        <div class="row-group"><input type="text" id="step2" placeholder="Step 3 (optional)"></div>
+        <div class="row-group"><input type="text" id="step3" placeholder="Step 4 (optional)"></div>
+        <div class="row-group"><input type="text" id="step4" placeholder="Step 5 (optional)"></div>
 
         <label>Check-In Cadence</label>
         <select id="cadenceInput">
@@ -388,7 +555,7 @@
         <div class="intro" style="margin-bottom:0;">
           Visible only in the coach view &mdash; this client never sees these notes. Use it for the read between the lines: patterns across cycles, what feedback landed, what to watch for next session.
         </div>
-        <label>Add a Note</label>
+        <label>Add a Note <span class="req-badge">Required</span></label>
         <textarea id="newNoteInput" placeholder="Observations, coaching adjustments, follow-ups..."></textarea>
         <button class="btn" onclick="saveNote()">Save Note</button>
         <div id="notesList" style="margin-top:24px;"></div>
@@ -425,6 +592,55 @@
       throw err;
     }
     return body;
+  }
+
+  // ================= Field validation helpers =================
+  // Highlights empty required fields in red with an inline message, and
+  // focuses the first one, instead of relying on a single generic alert.
+  // Returns true only if every listed field has a non-empty value.
+  function validateRequiredFields(specs) {
+    let firstInvalid = null;
+    specs.forEach(({ id, label }) => {
+      clearFieldError(id);
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (!el.value || !el.value.trim()) {
+        showFieldError(id, `${label} is required.`);
+        if (!firstInvalid) firstInvalid = el;
+      }
+    });
+    if (firstInvalid) {
+      firstInvalid.focus();
+      if (typeof firstInvalid.scrollIntoView === 'function') {
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
+    return !firstInvalid;
+  }
+
+  function showFieldError(id, message) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.add('field-invalid');
+    let errEl = document.getElementById(id + '-error');
+    if (!errEl) {
+      errEl = document.createElement('span');
+      errEl.className = 'field-error-msg';
+      errEl.id = id + '-error';
+      el.insertAdjacentElement('afterend', errEl);
+    }
+    errEl.textContent = message;
+    if (!el.dataset.clearWired) {
+      el.addEventListener('input', () => clearFieldError(id));
+      el.dataset.clearWired = '1';
+    }
+  }
+
+  function clearFieldError(id) {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('field-invalid');
+    const errEl = document.getElementById(id + '-error');
+    if (errEl) errEl.remove();
   }
 
   // ================= Goal Setting to the Now (login reminder) =================
@@ -516,7 +732,16 @@
 
   // ================= Init =================
   (async function init() {
-    const resetToken = new URLSearchParams(location.search).get('resetToken');
+    const params = new URLSearchParams(location.search);
+    const inviteToken = params.get('invite');
+    if (inviteToken) {
+      // Remove the token from the address bar right away so it isn't left
+      // in browser history, bookmarks, or screenshots.
+      history.replaceState(null, '', location.pathname);
+      await startInviteAcceptance(inviteToken);
+      return; // don't auto-login while accepting an invitation
+    }
+    const resetToken = params.get('resetToken');
     if (resetToken) {
       showGateStep('gateStepReset');
       window.pendingResetToken = resetToken;
@@ -532,6 +757,7 @@
   })();
 
   async function submitForgotPassword() {
+    if (!validateRequiredFields([{ id: 'forgotEmail', label: 'Email' }])) return;
     const email = document.getElementById('forgotEmail').value.trim();
     const errEl = document.getElementById('forgotError');
     const successEl = document.getElementById('forgotSuccessMsg');
@@ -547,7 +773,13 @@
   }
 
   async function submitResetPassword() {
+    if (!validateRequiredFields([{ id: 'resetNewPassword', label: 'New password' }])) return;
     const newPassword = document.getElementById('resetNewPassword').value;
+    if (newPassword.length < 10) {
+      showFieldError('resetNewPassword', 'Password must be at least 10 characters.');
+      document.getElementById('resetNewPassword').focus();
+      return;
+    }
     const errEl = document.getElementById('resetError');
     errEl.style.display = 'none';
     try {
@@ -563,11 +795,87 @@
     }
   }
 
+  // ================= Accepting an emailed invitation (client) =================
+  async function startInviteAcceptance(token) {
+    window.pendingInviteToken = token;
+    try {
+      const data = await api('/invitations/lookup', { method: 'POST', body: JSON.stringify({ token }) });
+      const inv = data.invitation;
+      document.getElementById('inviteWelcome').innerHTML =
+        `Welcome, <strong>${escapeHtml(inv.firstName)}</strong>. <strong>${escapeHtml(inv.coachName)}</strong> ` +
+        `has invited you to the Commitment Tracker. Confirm your name and choose a password to get started.`;
+      document.getElementById('inviteFirstName').value = inv.firstName;
+      document.getElementById('inviteLastName').value = inv.lastName;
+      document.getElementById('inviteEmail').value = inv.email;
+      showGateStep('gateStepInvite');
+      document.getElementById('invitePassword').focus();
+    } catch (e) {
+      if (e.status && e.status !== 400) {
+        document.getElementById('inviteInvalidMsg').textContent =
+          'We couldn\'t check this invitation just now. Please try the link again in a minute.';
+      }
+      showGateStep('gateStepInviteInvalid');
+    }
+  }
+
+  async function submitAcceptInvite() {
+    const ok = validateRequiredFields([
+      { id: 'inviteFirstName', label: 'First name' },
+      { id: 'inviteLastName', label: 'Last name' },
+      { id: 'invitePassword', label: 'Password' },
+      { id: 'invitePasswordConfirm', label: 'Password confirmation' },
+    ]);
+    if (!ok) return;
+    const password = document.getElementById('invitePassword').value;
+    const confirm = document.getElementById('invitePasswordConfirm').value;
+    if (password.length < 10) {
+      showFieldError('invitePassword', 'Password must be at least 10 characters.');
+      document.getElementById('invitePassword').focus();
+      return;
+    }
+    if (password !== confirm) {
+      showFieldError('invitePasswordConfirm', 'Passwords don\'t match.');
+      document.getElementById('invitePasswordConfirm').focus();
+      return;
+    }
+    const errEl = document.getElementById('inviteError');
+    const btn = document.getElementById('inviteSubmitBtn');
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    try {
+      const data = await api('/auth/signup/client', {
+        method: 'POST',
+        body: JSON.stringify({
+          inviteToken: window.pendingInviteToken,
+          firstName: document.getElementById('inviteFirstName').value.trim(),
+          lastName: document.getElementById('inviteLastName').value.trim(),
+          password,
+        }),
+      });
+      window.pendingInviteToken = null;
+      identity = data.user;
+      await enterApp();
+    } catch (e) {
+      errEl.textContent = e.message || 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+    }
+  }
+
+  function goToClientLogin() {
+    wireGate();
+    pendingRole = 'client';
+    openAuthStep();
+  }
+
   // ================= Gate =================
   let pendingRole = null;
   let authMode = 'login'; // 'login' | 'signup'
 
+  let gateWired = false;
   function wireGate() {
+    if (gateWired) return;
+    gateWired = true;
     document.getElementById('roleBtnCoach').addEventListener('click', () => { pendingRole = 'coach'; openAuthStep(); });
     document.getElementById('roleBtnClient').addEventListener('click', () => { pendingRole = 'client'; openAuthStep(); });
   }
@@ -582,17 +890,23 @@
     document.querySelectorAll('.gate-step').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     document.getElementById('gateError').style.display = 'none';
+    ['authName', 'authEmail', 'authPassword', 'forgotEmail', 'resetNewPassword',
+     'inviteFirstName', 'inviteLastName', 'invitePassword', 'invitePasswordConfirm'].forEach(clearFieldError);
   }
 
   function toggleAuthMode() {
     authMode = authMode === 'login' ? 'signup' : 'login';
     updateAuthFormMode();
+    ['authName', 'authEmail', 'authPassword'].forEach(clearFieldError);
   }
 
   function updateAuthFormMode() {
     const isSignup = authMode === 'signup';
     document.getElementById('nameFieldWrap').style.display = isSignup ? 'block' : 'none';
-    document.getElementById('inviteFieldWrap').style.display = (isSignup && pendingRole === 'client') ? 'block' : 'none';
+    // Clients can only join through their coach's emailed invitation.
+    const isClient = pendingRole === 'client';
+    document.getElementById('authToggleWrap').style.display = isClient ? 'none' : 'block';
+    document.getElementById('clientNewHereNote').style.display = isClient ? 'block' : 'none';
     document.getElementById('authSubmitBtn').textContent = isSignup ? 'Create Account' : 'Log In';
     document.getElementById('authToggleLabel').textContent = isSignup ? 'Already have an account?' : 'New here?';
     document.getElementById('authToggleBtn').textContent = isSignup ? 'Log in instead' : 'Create an account';
@@ -605,6 +919,15 @@
   }
 
   async function submitAuth() {
+    const isSignup = authMode === 'signup';
+    const fieldsToCheck = [
+      { id: 'authEmail', label: 'Email' },
+      { id: 'authPassword', label: 'Password' },
+    ];
+    if (isSignup) fieldsToCheck.push({ id: 'authName', label: 'Your name' });
+
+    if (!validateRequiredFields(fieldsToCheck)) return;
+
     const email = document.getElementById('authEmail').value.trim();
     const password = document.getElementById('authPassword').value;
 
@@ -614,14 +937,8 @@
         identity = data.user;
       } else {
         const name = document.getElementById('authName').value.trim();
-        if (pendingRole === 'coach') {
-          const data = await api('/auth/signup/coach', { method: 'POST', body: JSON.stringify({ email, password, name }) });
-          identity = data.user;
-        } else {
-          const inviteCode = document.getElementById('authInviteCode').value.trim();
-          const data = await api('/auth/signup/client', { method: 'POST', body: JSON.stringify({ email, password, name, inviteCode }) });
-          identity = data.user;
-        }
+        const data = await api('/auth/signup/coach', { method: 'POST', body: JSON.stringify({ email, password, name }) });
+        identity = data.user;
       }
       await enterApp();
     } catch (e) {
@@ -649,6 +966,7 @@
       document.getElementById('rosterBar').style.display = 'flex';
       document.getElementById('notesTabBtn').style.display = 'inline-block';
       await loadRoster();
+      loadPendingInvites();
       if (roster.length) {
         activeClientId = roster[0].id;
         await loadActiveClient();
@@ -681,19 +999,182 @@
     await loadActiveClient();
   }
 
-  async function inviteNewClient() {
+  // ================= Invite a client (coach) =================
+  function openInviteModal() {
+    resetInviteForm();
+    document.getElementById('inviteOverlay').classList.add('active');
+    setTimeout(() => document.getElementById('invFirstName').focus(), 50);
+  }
+
+  function closeInviteModal() {
+    document.getElementById('inviteOverlay').classList.remove('active');
+  }
+
+  function resetInviteForm() {
+    ['invFirstName', 'invLastName', 'invEmail'].forEach(id => {
+      document.getElementById(id).value = '';
+      clearFieldError(id);
+    });
+    document.getElementById('invError').style.display = 'none';
+    document.getElementById('invSubmitBtn').disabled = false;
+    document.getElementById('invSubmitBtn').textContent = 'Send Invitation';
+    document.getElementById('inviteFormWrap').style.display = 'block';
+    document.getElementById('inviteSuccessWrap').style.display = 'none';
+    document.getElementById('invFirstName').focus();
+  }
+
+  async function submitInvite() {
+    const ok = validateRequiredFields([
+      { id: 'invFirstName', label: 'First name' },
+      { id: 'invLastName', label: 'Last name' },
+      { id: 'invEmail', label: 'Email address' },
+    ]);
+    if (!ok) return;
+    const email = document.getElementById('invEmail').value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showFieldError('invEmail', 'Please enter a valid email address.');
+      document.getElementById('invEmail').focus();
+      return;
+    }
+    const firstName = document.getElementById('invFirstName').value.trim();
+    const lastName = document.getElementById('invLastName').value.trim();
+    const errEl = document.getElementById('invError');
+    const btn = document.getElementById('invSubmitBtn');
+    errEl.style.display = 'none';
+    btn.disabled = true;
+    btn.textContent = 'Sending\u2026';
     try {
-      const data = await api('/auth/invite', { method: 'POST' });
-      alert(
-        'Share this with your new client:\n\n' +
-        'Invite code: ' + data.code + '\n' +
-        'They should choose "I\'m a Client" -> "Create an account" and enter this code.\n\n' +
-        'It expires in 7 days and can only be used once.'
-      );
+      const data = await api('/invitations', { method: 'POST', body: JSON.stringify({ firstName, lastName, email }) });
+      document.getElementById('invSuccessTitle').textContent = data.emailSent
+        ? (data.refreshedExisting ? 'New invitation sent' : 'Invitation sent')
+        : 'Invitation saved';
+      document.getElementById('invSuccessMsg').textContent = data.emailSent
+        ? `${firstName} ${lastName} will get an email at ${email} with a link to create their account. The link expires in 7 days.`
+          + (data.refreshedExisting ? ' Their earlier invitation link no longer works.' : '')
+        : `${firstName} ${lastName} was added to your pending invitations.`;
+      const warn = document.getElementById('invSuccessWarn');
+      if (data.emailSent) {
+        warn.style.display = 'none';
+      } else {
+        warn.textContent = 'The email could not be sent right now. Open Pending in the roster bar and use Resend in a few minutes. If it keeps failing, the email settings on the server need attention.';
+        warn.style.display = 'block';
+      }
+      document.getElementById('inviteFormWrap').style.display = 'none';
+      document.getElementById('inviteSuccessWrap').style.display = 'block';
+      await loadPendingInvites();
     } catch (e) {
-      alert('Could not generate an invite code: ' + e.message);
+      errEl.textContent = e.message || 'Something went wrong. Please try again.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Send Invitation';
     }
   }
+
+  // ================= Pending invitations (coach) =================
+  let pendingInvites = [];
+
+  async function loadPendingInvites() {
+    try {
+      const data = await api('/invitations');
+      pendingInvites = data.invitations || [];
+    } catch (e) {
+      pendingInvites = [];
+    }
+    const btn = document.getElementById('pendingInvitesBtn');
+    document.getElementById('pendingInvitesCount').textContent = pendingInvites.length;
+    btn.style.display = pendingInvites.length ? 'inline-block' : 'none';
+    if (document.getElementById('pendingOverlay').classList.contains('active')) renderPendingList();
+  }
+
+  async function openPendingModal() {
+    document.getElementById('pendingOverlay').classList.add('active');
+    renderPendingList();
+    await loadPendingInvites();
+  }
+
+  function closePendingModal() {
+    document.getElementById('pendingOverlay').classList.remove('active');
+  }
+
+  function renderPendingList() {
+    const el = document.getElementById('pendingList');
+    if (!pendingInvites.length) {
+      el.innerHTML = `<div class="empty-state" style="padding:24px 10px;"><p>No pending invitations. Everyone you've invited has joined.</p></div>`;
+      return;
+    }
+    el.innerHTML = pendingInvites.map(inv => `
+      <div class="invite-item" id="inv-${escapeHtml(inv.id)}">
+        <div class="invite-name">${escapeHtml(inv.firstName)} ${escapeHtml(inv.lastName)}</div>
+        <div class="invite-email">${escapeHtml(inv.email)}</div>
+        <div class="invite-meta">
+          ${inv.lastSentAt ? 'Sent ' + formatDate(inv.lastSentAt) : '<span class="expired">Email not delivered yet</span>'}
+          &middot;
+          ${inv.expired ? '<span class="expired">Expired</span>' : 'Expires ' + formatDate(inv.expiresAt)}
+        </div>
+        <div class="invite-actions">
+          <button data-action="resend" data-id="${escapeHtml(inv.id)}">Resend</button>
+          <button class="danger" data-action="cancel" data-id="${escapeHtml(inv.id)}">Cancel Invitation</button>
+        </div>
+        <div class="invite-status" id="inv-status-${escapeHtml(inv.id)}"></div>
+      </div>`).join('');
+    el.querySelectorAll('button[data-action]').forEach(b => {
+      b.addEventListener('click', () => {
+        if (b.dataset.action === 'resend') resendInvite(b.dataset.id, b);
+        else cancelInvite(b.dataset.id, b);
+      });
+    });
+  }
+
+  async function resendInvite(id, btn) {
+    const statusEl = document.getElementById('inv-status-' + id);
+    btn.disabled = true;
+    statusEl.style.color = 'var(--teal-dark)';
+    statusEl.textContent = 'Sending\u2026';
+    try {
+      const data = await api('/invitations/' + encodeURIComponent(id) + '/resend', { method: 'POST' });
+      await loadPendingInvites();
+      const fresh = document.getElementById('inv-status-' + id);
+      if (fresh) {
+        fresh.style.color = data.emailSent ? 'var(--teal-dark)' : 'var(--red)';
+        fresh.textContent = data.emailSent
+          ? 'New link sent. It expires in 7 days.'
+          : 'The email could not be sent. Please try again in a few minutes.';
+      }
+    } catch (e) {
+      statusEl.style.color = 'var(--red)';
+      statusEl.textContent = e.message || 'Something went wrong.';
+      btn.disabled = false;
+    }
+  }
+
+  async function cancelInvite(id, btn) {
+    const inv = pendingInvites.find(i => i.id === id);
+    const who = inv ? `${inv.firstName} ${inv.lastName}` : 'this client';
+    if (!confirm(`Cancel the invitation for ${who}? Their link will stop working.`)) return;
+    btn.disabled = true;
+    try {
+      await api('/invitations/' + encodeURIComponent(id), { method: 'DELETE' });
+      await loadPendingInvites();
+      renderPendingList();
+    } catch (e) {
+      const statusEl = document.getElementById('inv-status-' + id);
+      if (statusEl) { statusEl.style.color = 'var(--red)'; statusEl.textContent = e.message || 'Something went wrong.'; }
+      btn.disabled = false;
+    }
+  }
+
+  // Esc closes whichever coach modal is open; clicking the dimmed backdrop does too.
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    closeInviteModal();
+    closePendingModal();
+  });
+  ['inviteOverlay', 'pendingOverlay'].forEach(id => {
+    document.getElementById(id).addEventListener('click', (e) => {
+      if (e.target.id === id) e.currentTarget.classList.remove('active');
+    });
+  });
+  document.getElementById('invEmail').addEventListener('keydown', (e) => { if (e.key === 'Enter') submitInvite(); });
 
   function showNoClient(show) {
     document.getElementById('noClientSelected').style.display = show ? 'block' : 'none';
@@ -737,16 +1218,17 @@
 
   // ================= Save commitment =================
   async function saveCommitment() {
+    if (!validateRequiredFields([
+      { id: 'goalInput', label: 'The Goal' },
+      { id: 'strategy0', label: 'Strategy 1' },
+      { id: 'step0', label: 'Step 1' },
+    ])) return;
+
     const why = document.getElementById('whyInput').value.trim();
     const goal = document.getElementById('goalInput').value.trim();
     const strategies = [0,1,2].map(i => document.getElementById('strategy'+i).value.trim()).filter(Boolean);
     const steps = [0,1,2,3,4].map(i => document.getElementById('step'+i).value.trim()).filter(Boolean).map(text => ({ text, done: false }));
     const cadence = document.getElementById('cadenceInput').value;
-
-    if (!goal || strategies.length < 1 || steps.length < 1) {
-      alert('Please fill in at least the goal, one strategy, and one action step.');
-      return;
-    }
 
     try {
       const data = await api('/commitments/' + activeClientId, {
@@ -836,16 +1318,16 @@
           This isn't about grading yourself. It's about learning what's working, being honest about what's not &mdash; that honesty is a strength, not a confession &mdash; and deciding what happens differently next, not dwelling on what already happened.
         </div>
 
-        <label>1. Progress <span class="hint">What moved forward since the last check-in?</span></label>
+        <label>1. Progress <span class="req-badge">Required</span> <span class="hint">What moved forward since the last check-in?</span></label>
         <textarea id="ciProgress" placeholder="What actually happened?"></textarea>
 
-        <label>2. Obstacle <span class="hint">What got in the way &mdash; honestly?</span></label>
+        <label>2. Obstacle <span class="opt-badge">Optional</span> <span class="hint">What got in the way &mdash; honestly?</span></label>
         <textarea id="ciObstacle" placeholder="Name it plainly, no spin."></textarea>
 
-        <label>3. Rethink <span class="hint">What's one adjustment that moves this forward, starting now?</span></label>
+        <label>3. Rethink <span class="opt-badge">Optional</span> <span class="hint">What's one adjustment that moves this forward, starting now?</span></label>
         <textarea id="ciRethink" placeholder="Focus forward, not backward."></textarea>
 
-        <label>4. Support <span class="hint">Who or what is needed for the next stretch?</span></label>
+        <label>4. Support <span class="opt-badge">Optional</span> <span class="hint">Who or what is needed for the next stretch?</span></label>
         <textarea id="ciSupport" placeholder="Ask for what's actually needed."></textarea>
 
         <label>Progress Rating <span class="hint">How much momentum right now?</span></label>
@@ -854,7 +1336,7 @@
           <div id="ratingVal">6</div>
         </div>
 
-        <label>One Commitment for Next Period <span class="hint">Specific and doable before the next check-in.</span></label>
+        <label>One Commitment for Next Period <span class="req-badge">Required</span> <span class="hint">Specific and doable before the next check-in.</span></label>
         <textarea id="ciNext" placeholder="I will..."></textarea>
 
         <button class="btn" onclick="saveCheckin()">Save Check-In</button>
@@ -862,17 +1344,17 @@
   }
 
   async function saveCheckin() {
+    if (!validateRequiredFields([
+      { id: 'ciProgress', label: 'Progress' },
+      { id: 'ciNext', label: 'Commitment for Next Period' },
+    ])) return;
+
     const progress = document.getElementById('ciProgress').value.trim();
     const obstacle = document.getElementById('ciObstacle').value.trim();
     const rethink = document.getElementById('ciRethink').value.trim();
     const support = document.getElementById('ciSupport').value.trim();
     const rating = document.getElementById('ciRating').value;
     const nextCommitment = document.getElementById('ciNext').value.trim();
-
-    if (!progress || !nextCommitment) {
-      alert('Please fill in at least Progress and the Commitment for Next Period.');
-      return;
-    }
 
     try {
       const data = await api('/checkins/' + activeClientId, {
@@ -943,6 +1425,7 @@
     if (identity.commitment_role !== 'coach') return;
     const el = document.getElementById('notesList');
     document.getElementById('newNoteInput').value = '';
+    clearFieldError('newNoteInput');
     try {
       const data = await api('/notes/' + activeClientId);
       activeNotes = data.notes;
@@ -962,8 +1445,8 @@
   }
 
   async function saveNote() {
+    if (!validateRequiredFields([{ id: 'newNoteInput', label: 'Note' }])) return;
     const text = document.getElementById('newNoteInput').value.trim();
-    if (!text) return;
     try {
       await api('/notes/' + activeClientId, { method: 'POST', body: JSON.stringify({ text }) });
       renderNotes();

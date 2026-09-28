@@ -3,32 +3,43 @@
 // to point to when demoing the app. Safe to run more than once -- it skips
 // anything that already exists instead of erroring or duplicating.
 require('dotenv').config();
+const crypto = require('crypto');
 const { pool } = require('./db');
 const { hashPassword } = require('./utils/hash');
 
-const DEMO_COACH = { email: 'demo.coach@truecyclecoaching.com', password: 'DemoCoach123!', name: 'Demo Coach' };
-const DEMO_CLIENT = { email: 'demo.client@truecyclecoaching.com', password: 'DemoClient123!', name: 'Alex Rivera' };
+function randomPassword() {
+  // 16 random bytes -> a readable-enough, unpredictable password. Printed
+  // once to the console when the account is first created; not stored
+  // anywhere in the repo or this script.
+  return crypto.randomBytes(12).toString('base64url');
+}
 
-async function findOrCreateUser(client, { email, password, name, commitment_role }) {
+const DEMO_COACH = { email: 'demo.coach@truecyclecoaching.com', name: 'Demo Coach' };
+const DEMO_CLIENT = { email: 'demo.client@truecyclecoaching.com', name: 'Alex Rivera' };
+
+async function findOrCreateUser(client, { email, name, commitment_role }, generatedPasswords) {
   const existing = await client.query('SELECT id FROM users WHERE email = $1', [email]);
   if (existing.rowCount > 0) return existing.rows[0].id;
 
+  const password = randomPassword();
   const passwordHash = await hashPassword(password);
   const result = await client.query(
     `INSERT INTO users (email, name, password_hash, commitment_role)
      VALUES ($1, $2, $3, $4) RETURNING id`,
     [email, name, passwordHash, commitment_role]
   );
+  generatedPasswords[email] = password;
   return result.rows[0].id;
 }
 
 async function run() {
   const client = await pool.connect();
+  const generatedPasswords = {};
   try {
     console.log('Seeding demo data...');
 
-    const coachId = await findOrCreateUser(client, { ...DEMO_COACH, commitment_role: 'coach' });
-    const clientId = await findOrCreateUser(client, { ...DEMO_CLIENT, commitment_role: 'client' });
+    const coachId = await findOrCreateUser(client, { ...DEMO_COACH, commitment_role: 'coach' }, generatedPasswords);
+    const clientId = await findOrCreateUser(client, { ...DEMO_CLIENT, commitment_role: 'client' }, generatedPasswords);
 
     const rel = await client.query(
       'SELECT 1 FROM ct_relationships WHERE coach_user_id = $1 AND client_user_id = $2',
@@ -117,10 +128,16 @@ async function run() {
       console.log('Created 1 demo coach note.');
     }
 
-    console.log('\nDone. Demo login credentials:\n');
-    console.log(`  Coach  -> ${DEMO_COACH.email} / ${DEMO_COACH.password}`);
-    console.log(`  Client -> ${DEMO_CLIENT.email} / ${DEMO_CLIENT.password}`);
-    console.log('\n(Change or remove these before this app has real client data on it.)');
+    console.log('\nDone.');
+    if (Object.keys(generatedPasswords).length > 0) {
+      console.log('\nNewly-created demo login credentials (shown once -- write these down now):\n');
+      for (const [email, password] of Object.entries(generatedPasswords)) {
+        console.log(`  ${email} / ${password}`);
+      }
+      console.log('\nUse the "Forgot your password?" link if you lose these -- they are not stored anywhere in plaintext.');
+    } else {
+      console.log('\nDemo accounts already existed -- no new passwords were generated. Use "Forgot your password?" if you need to reset either one.');
+    }
   } finally {
     client.release();
     await pool.end();
