@@ -268,6 +268,7 @@
         <button id="roleBtnCoach">I'm the Coach</button>
         <button id="roleBtnClient">I'm a Client</button>
       </div>
+      <div class="gate-error" id="roleNotice"></div>
     </div>
 
     <!-- Step 2: auth (login/signup, role-aware) -->
@@ -576,7 +577,16 @@
 <script>
   // Backend API URL. Set permanently to the live truecycle-platform backend
   // so this doesn't need re-editing every time this file is updated.
-  window.API_BASE = window.API_BASE || 'https://truecycle-platform.onrender.com';
+  // On any truecyclecoaching.com address, talk to the backend at
+  // api.truecyclecoaching.com. Keeping the site and the API under the same
+  // domain means iPhone browsers treat the login cookie as first-party and
+  // don't block it. Anywhere else, fall back to the backend's Render address.
+  window.API_BASE = window.API_BASE || (
+    /(^|\.)truecyclecoaching\.com$/i.test(location.hostname)
+      ? 'https://api.truecyclecoaching.com'
+      : 'https://truecycle-platform.onrender.com'
+  );
+  const SESSION_MSG_KEY = 'tcc-session-msg';
 
   async function api(path, options = {}) {
     const res = await fetch(window.API_BASE + '/api' + path, {
@@ -587,6 +597,12 @@
     let body = null;
     try { body = await res.json(); } catch (e) { /* no body */ }
     if (!res.ok) {
+      // Logged-in screen, but the server no longer recognizes the session
+      // (expired, or the browser dropped the cookie): send the person back
+      // to the login screen with an explanation instead of a blank page.
+      if (res.status === 401 && identity && !path.startsWith('/auth/')) {
+        handleSessionLost('Your session has ended. Please log in again.');
+      }
       const err = new Error((body && body.error) || 'Request failed');
       err.status = res.status;
       throw err;
@@ -753,6 +769,13 @@
       await enterApp();
     } catch (e) {
       wireGate();
+      let msg = null;
+      try { msg = sessionStorage.getItem(SESSION_MSG_KEY); sessionStorage.removeItem(SESSION_MSG_KEY); } catch (err) {}
+      if (msg) {
+        const n = document.getElementById('roleNotice');
+        n.textContent = msg;
+        n.style.display = 'block';
+      }
     }
   })();
 
@@ -853,6 +876,11 @@
         }),
       });
       window.pendingInviteToken = null;
+      if (!(await confirmSessionStuck())) {
+        errEl.textContent = 'Your account was created. ' + COOKIE_BLOCKED_MSG.replace('You signed in, but this', 'However, this');
+        errEl.style.display = 'block';
+        return;
+      }
       identity = data.user;
       await enterApp();
     } catch (e) {
@@ -890,6 +918,7 @@
     document.querySelectorAll('.gate-step').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     document.getElementById('gateError').style.display = 'none';
+    document.getElementById('roleNotice').style.display = 'none';
     ['authName', 'authEmail', 'authPassword', 'forgotEmail', 'resetNewPassword',
      'inviteFirstName', 'inviteLastName', 'invitePassword', 'invitePasswordConfirm'].forEach(clearFieldError);
   }
@@ -940,11 +969,37 @@
         const data = await api('/auth/signup/coach', { method: 'POST', body: JSON.stringify({ email, password, name }) });
         identity = data.user;
       }
+      if (!(await confirmSessionStuck())) {
+        identity = null;
+        showGateError(COOKIE_BLOCKED_MSG);
+        return;
+      }
       await enterApp();
     } catch (e) {
       showGateError(e.message || 'Something went wrong. Please try again.');
     }
   }
+
+  let sessionLostHandled = false;
+  function handleSessionLost(message) {
+    if (sessionLostHandled) return;
+    sessionLostHandled = true;
+    try { sessionStorage.setItem(SESSION_MSG_KEY, message); } catch (e) {}
+    location.href = location.origin + location.pathname;
+  }
+
+  // After login/signup, make sure the browser actually kept the session
+  // cookie before showing the app. If it didn't, say so plainly.
+  async function confirmSessionStuck() {
+    try {
+      await api('/auth/me');
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  const COOKIE_BLOCKED_MSG = 'You signed in, but this browser didn\'t keep you logged in. ' +
+    'Please make sure cookies are allowed for this site and try again.';
 
   async function logout() {
     try { await api('/auth/logout', { method: 'POST' }); } catch (e) {}
